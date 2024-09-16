@@ -49,7 +49,7 @@ body {
   border: none;
   background-color: #4CAF50;
   color: white;
-  cursor: hand;
+  cursor: pointer;
 }
 
 .login-form input[type="submit"]:hover {
@@ -86,9 +86,6 @@ function login() {
 /* ...existing scripts... */
 </script>
 
-<!-- Load Google Fonts and FontAwesome Icons -->
-<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
 
 <!DOCTYPE html>
 <html lang="en">
@@ -290,16 +287,14 @@ function login() {
             display: none; /* Hide by default */
         }
 
-        .welcome,
-        .changelog {
+        .welcome, .changelog {
             padding: 20px;
             background: rgba(255, 255, 255, 0.9);
             border-radius: 10px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
 
-        .welcome h1,
-        .changelog h1 {
+        .welcome h1, .changelog h1 {
             margin-top: 0;
         }
 
@@ -320,6 +315,42 @@ function login() {
 
         .battery-status.low {
             color: red; /* Change to red for low battery */
+        }
+
+        /* Dark mode styles */
+        body.dark-mode {
+            background: #121212;
+            color: white;
+        }
+
+        body.dark-mode .tab-bar {
+            background-color: #1e1e1e;
+        }
+
+        body.dark-mode .tab {
+            background-color: #2e2e2e;
+            color: white;
+            border: 1px solid #444;
+        }
+
+        body.dark-mode .toolbar {
+            background-color: #1e1e1e;
+        }
+
+        body.dark-mode .content {
+            background-color: #2e2e2e;
+        }
+        
+        /* Settings styles */
+        .settings-container {
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .settings-container h1 {
+            margin-top: 0;
         }
     </style>
 </head>
@@ -363,7 +394,7 @@ function login() {
         const networkStatus = document.getElementById('networkStatus');
 
         // Show the body after loading
-        window.onload = function () {
+        window.onload = function() {
             document.body.style.display = 'block'; // Show main content
             setTimeout(() => {
                 document.querySelector('.loading-screen').style.display = 'none'; // Hide loading screen
@@ -375,12 +406,22 @@ function login() {
             // Setup event listener for network changes
             window.addEventListener('online', updateNetworkStatus);
             window.addEventListener('offline', updateNetworkStatus);
+            // Add keyboard event for opening settings tab
+            window.addEventListener('keydown', (event) => {
+                if (event.altKey && event.key === '0') {
+                    event.preventDefault(); // Prevent default action
+                    addTab('Settings', ''); // Open settings tab
+                }
+            });
         };
 
         function updateDateTime() {
             const now = new Date();
             document.getElementById('currentDate').textContent = now.toLocaleDateString(); // Update date
-            document.getElementById('currentTime').textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); // Update time
+            document.getElementById('currentTime').textContent = now.toLocaleTimeString([], {
+                hour: '2-digit',
+                minute: '2-digit'
+            }); // Update time
         }
 
         function addTab(title = 'BrowserPVN', url = 'https://nano-proxy.github.io/') {
@@ -401,11 +442,18 @@ function login() {
             const content = document.createElement('div');
             content.className = 'content';
             content.id = `content-${tabId}`;
-            content.innerHTML = title === 'Changelog'
-                ? '<div class="changelog"><h1>Changelog</h1><p>v0.0.1: Created PlayerVPN.<br>v0.2.4: Added Toolbar/search & Nicer Tabs</p></div>'
-                : title === 'Welcome'
-                    ? '<div class="welcome"><h1>Welcome!</h1><p>To start searching, open a new tab or search through the "BrowserPVN" browser!</p></div>'
-                    : `<iframe src="${url}"></iframe>`;
+            content.innerHTML = title === 'Settings'
+                ? `<div class="settings-container">
+                    <h1>Settings</h1>
+                    <label>
+                        <input type="checkbox" id="themeToggle" onchange="toggleTheme()"> Dark Mode
+                    </label>
+                   </div>`
+                : title === 'Changelog'
+                    ? '<div class="changelog"><h1>Changelog</h1><p>v0.0.1: Created PlayerVPN.<br>v0.2.4: Added Toolbar/search & Nicer Tabs</p></div>'
+                    : title === 'Welcome'
+                        ? '<div class="welcome"><h1>Welcome! Press Alt+0 to find Settings!</h1><p>To start searching, open a new tab or search through the "BrowserPVN" browser!</p></div>'
+                        : `<iframe src="${url}"></iframe>`;
 
             document.querySelector('.content-container').appendChild(content);
             switchTab(tabId, url);
@@ -478,12 +526,21 @@ function login() {
             networkStatus.textContent = `Network: ${status} (${connectionType})`;
         }
 
+        // Toggle Theme
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+        }
+
         // Initialize with the welcome page and add other tabs
         addTab('Welcome', ''); // Welcome page
         addTab('Changelog', ''); // Changelog as a default tab
         addTab('Rammerhead', 'https://c.pluh.store/'); // Add Rammerhead tab
         switchTab('tab-1', ''); // Switch to the welcome tab
     </script>
+
+    <!-- Load Google Fonts and FontAwesome Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
 </body>
 
 </html>
