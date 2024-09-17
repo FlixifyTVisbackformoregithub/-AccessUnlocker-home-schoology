@@ -86,7 +86,6 @@ function login() {
 /* ...existing scripts... */
 </script>
 
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -287,14 +286,16 @@ function login() {
             display: none; /* Hide by default */
         }
 
-        .welcome, .changelog {
+        .welcome,
+        .changelog {
             padding: 20px;
             background: rgba(255, 255, 255, 0.9);
             border-radius: 10px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
 
-        .welcome h1, .changelog h1 {
+        .welcome h1,
+        .changelog h1 {
             margin-top: 0;
         }
 
@@ -340,7 +341,7 @@ function login() {
         body.dark-mode .content {
             background-color: #2e2e2e;
         }
-        
+
         /* Settings styles */
         .settings-container {
             padding: 20px;
@@ -351,6 +352,52 @@ function login() {
 
         .settings-container h1 {
             margin-top: 0;
+        }
+
+        /* Tab Cloaks */
+        .cloak-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .cloak {
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            border-radius: 5px;
+            overflow: hidden;
+            border: 2px solid transparent;
+            transition: border-color 0.3s;
+        }
+
+        .cloak:hover {
+            border-color: #007bff; /* Change border on hover */
+        }
+
+        /* User input styles */
+        .custom-title {
+            margin-top: 20px;
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        .update-title {
+            margin-top: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .update-title:hover {
+            background-color: #45a049; /* Darker green on hover */
         }
     </style>
 </head>
@@ -392,6 +439,7 @@ function login() {
         const maxTabs = 100;
         const batteryStatus = document.getElementById('batteryStatus');
         const networkStatus = document.getElementById('networkStatus');
+        let currentTabId = '';
 
         // Show the body after loading
         window.onload = function() {
@@ -436,23 +484,34 @@ function login() {
             tab.id = tabId;
             tab.innerHTML = `<span class="tab-title">${title}</span><span class="close" onclick="closeTab('${tabId}')"><i class="fas fa-times"></i></span>`;
             tab.onclick = () => switchTab(tabId, url);
+            currentTabId = tabId; // Keep track of the current active tab ID
 
             document.querySelector('.tab-bar').insertBefore(tab, document.querySelector('.add-tab'));
 
             const content = document.createElement('div');
             content.className = 'content';
             content.id = `content-${tabId}`;
-            content.innerHTML = title === 'Settings'
+            content.innerHTML = title === 'Settings' 
                 ? `<div class="settings-container">
                     <h1>Settings</h1>
                     <label>
                         <input type="checkbox" id="themeToggle" onchange="toggleTheme()"> Dark Mode
                     </label>
-                   </div>`
+                    <h2>Tab Cloaks</h2>
+                    <div class="cloak-container">
+                        <img src="https://via.placeholder.com/50" class="cloak" onclick="changeTabIcon('${tabId}', 'https://via.placeholder.com/50')">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/480px-Google_%22G%22_logo.svg.png" class="cloak" onclick="changeTabIcon('${tabId}', 'https://via.placeholder.com/50/ff0000')">
+                        <img src="https://resources.finalsite.net/images/f_auto,q_auto/v1626100427/k12albemarleorg/uj41eppe27bunrvhwnep/PowerSchoolLogos_Vertical-01.png" class="cloak" onclick="changeTabIcon('${tabId}', 'https://via.placeholder.com/50/00ff00')">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/5/59/Google_Classroom_Logo.png" class="cloak" onclick="changeTabIcon('${tabId}', 'https://1000logos.net/wp-content/uploads/2023/01/Google-Docs-logo.png')">
+                        <img src="https://logos-world.net/wp-content/uploads/2023/12/Google-Slides-Logo.png" class="cloak" onclick="changeTabIcon('${tabId}', 'https://via.placeholder.com/50/ffff00')">
+                    </div>
+                    <input type="text" class="custom-title" placeholder="Enter custom title" id="customTitleInput">
+                    <button class="update-title" onclick="updateTabTitle('${tabId}')">Update Title</button>
+                  </div>`
                 : title === 'Changelog'
                     ? '<div class="changelog"><h1>Changelog</h1><p>v0.0.1: Created PlayerVPN.<br>v0.2.4: Added Toolbar/search & Nicer Tabs</p></div>'
                     : title === 'Welcome'
-                        ? '<div class="welcome"><h1>Welcome! Press Alt+0 to find Settings!</h1><p>To start searching, open a new tab or search through the "BrowserPVN" browser!</p></div>'
+                        ? '<div class="welcome"><h1>Welcome!</h1><p>To start searching, open a new tab or search through the "BrowserPVN" browser!</p></div>'
                         : `<iframe src="${url}"></iframe>`;
 
             document.querySelector('.content-container').appendChild(content);
@@ -488,6 +547,24 @@ function login() {
         function hideNoTabsMessage() {
             const message = document.getElementById('noTabsMessage');
             message.style.display = 'none'; // Hide message
+        }
+
+        function changeTabIcon(tabId, iconUrl) {
+            const link = document.querySelector(`link[rel="icon"]`);
+            link.href = iconUrl; // Change the favicon in the browser
+        }
+
+        function updateTabTitle(tabId) {
+            const input = document.getElementById('customTitleInput');
+            const newTitle = input.value.trim();
+            if (newTitle) {
+                const tabElement = document.getElementById(tabId);
+                if (tabElement) {
+                    const tabTitle = tabElement.querySelector('.tab-title');
+                    tabTitle.textContent = newTitle;
+                    document.title = newTitle; // Update the title of the document
+                }
+            }
         }
 
         // Check Battery Status
