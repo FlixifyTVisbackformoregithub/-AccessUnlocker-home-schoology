@@ -86,6 +86,7 @@ function login() {
 /* ...existing scripts... */
 </script>
 
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -442,7 +443,7 @@ function login() {
         let currentTabId = '';
 
         // Show the body after loading
-        window.onload = function() {
+        window.onload = function () {
             document.body.style.display = 'block'; // Show main content
             setTimeout(() => {
                 document.querySelector('.loading-screen').style.display = 'none'; // Hide loading screen
@@ -459,6 +460,14 @@ function login() {
                 if (event.altKey && event.key === '0') {
                     event.preventDefault(); // Prevent default action
                     addTab('Settings', ''); // Open settings tab
+                }
+            });
+
+            // Add keyboard event listener for opening new tab with Ctrl + Alt + O
+            window.addEventListener('keydown', (event) => {
+                if (event.ctrlKey && event.altKey && event.key === 'o') {
+                    event.preventDefault(); // Prevent any default action
+                    addTab(); // Open a new tab
                 }
             });
         };
@@ -491,7 +500,7 @@ function login() {
             const content = document.createElement('div');
             content.className = 'content';
             content.id = `content-${tabId}`;
-            content.innerHTML = title === 'Settings' 
+            content.innerHTML = title === 'Settings'
                 ? `<div class="settings-container">
                     <h1>Settings</h1>
                     <label>
@@ -511,7 +520,7 @@ function login() {
                 : title === 'Changelog'
                     ? '<div class="changelog"><h1>Changelog</h1><p>v0.0.1: Created PlayerVPN.<br>v0.2.4: Added Toolbar/search & Nicer Tabs</p></div>'
                     : title === 'Welcome'
-                        ? '<div class="welcome"><h1>Welcome!</h1><p>To start searching, open a new tab or search through the "BrowserPVN" browser!</p></div>'
+                        ? '<div class="welcome"><h1>Welcome! Press Alt+0 For setting & Ctrl+Alt+o for New tab!</h1><p>To start searching, open a new tab or search through the "BrowserPVN" browser!</p></div>'
                         : `<iframe src="${url}"></iframe>`;
 
             document.querySelector('.content-container').appendChild(content);
